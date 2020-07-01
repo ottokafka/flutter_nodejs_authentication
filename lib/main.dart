@@ -57,7 +57,7 @@ class SignUpSection extends StatelessWidget {
 }
 
 signup(email, password) async {
-  var url = "http://127.0.0.1:5000"; // iOS
+  var url = "http://127.0.0.1:5000/signup"; // iOS
   final http.Response response = await http.post(
     url,
     headers: <String, String>{
@@ -68,9 +68,9 @@ signup(email, password) async {
       'password': password,
     }),
   );
-
-  if (response.statusCode == 201) {
-  } else {
-    throw Exception('Failed to create album.');
-  }
+  print(response.body);
+  // if (response.statusCode == 201) {
+  // } else {
+  //   throw Exception('Failed to create album.');
+  // }
 }
