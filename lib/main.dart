@@ -1,3 +1,4 @@
+//
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,12 +12,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SignUpClass(),
+      home: SignUpSection(),
     );
   }
 }
 
-class SignUpClass extends StatelessWidget {
+class SignUpSection extends StatelessWidget {
   var email;
   var password;
 
