@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: SignUpSection(),
+      routes: {LandingScreen.id: (context) => LandingScreen()},
     );
   }
 }
@@ -45,10 +47,13 @@ class SignUpSection extends StatelessWidget {
                     password = value;
                   })),
           FlatButton.icon(
-              onPressed: () {
-                print(email);
-                print(password);
+              onPressed: () async {
                 signup(email, password);
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String token = prefs.getString("token");
+                if (token != null) {
+                  Navigator.pushNamed(context, LandingScreen.id);
+                }
               },
               icon: Icon(Icons.save),
               label: Text("Sign UP"))
@@ -57,7 +62,7 @@ class SignUpSection extends StatelessWidget {
 }
 
 signup(email, password) async {
-  var url = "http://127.0.0.1:5000/signup"; // iOS
+  var url = "http://localhost:5000/signup"; // iOS
   final http.Response response = await http.post(
     url,
     headers: <String, String>{
@@ -69,8 +74,16 @@ signup(email, password) async {
     }),
   );
   print(response.body);
-  // if (response.statusCode == 201) {
-  // } else {
-  //   throw Exception('Failed to create album.');
-  // }
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var parse = jsonDecode(response.body);
+
+  await prefs.setString('token', parse["token"]);
+}
+
+class LandingScreen extends StatelessWidget {
+  static const String id = "LandingScreen";
+  @override
+  Widget build(BuildContext context) {
+    return Text("Welcome to the Landing Screen");
+  }
 }
