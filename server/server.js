@@ -35,4 +35,18 @@ app.post("/signup", async (req, res) => {
   res.json({ token: "1234567890" });
 });
 
+// login route api
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  console.log(email);
+
+  let user = await User.findOne({ email });
+  console.log(user);
+  if (user.password !== password) {
+    return res.json({ msg: "password is not correct" });
+  }
+
+  return res.json({ token: "1234567890" });
+});
+
 app.listen(5000, () => console.log("Example app listening on port 5000!"));
