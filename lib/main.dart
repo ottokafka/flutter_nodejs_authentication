@@ -168,6 +168,20 @@ class LandingScreen extends StatelessWidget {
   static const String id = "LandingScreen";
   @override
   Widget build(BuildContext context) {
-    return Text("Welcome to the Landing Screen");
+    return Scaffold(
+        body: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Center(child: Text("Welcome to the Landing Screen")),
+        FlatButton.icon(
+            onPressed: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.setString('token', null);
+              Navigator.pushNamed(context, LoginSection.id);
+            },
+            icon: Icon(Icons.send),
+            label: Text("Logout"))
+      ],
+    ));
   }
 }
