@@ -60,7 +60,7 @@ class SignUpSection extends StatelessWidget {
                   })),
           FlatButton.icon(
             onPressed: () async {
-              signup(email, password);
+              await signup(email, password);
               SharedPreferences prefs = await SharedPreferences.getInstance();
               String token = prefs.getString("token");
               if (token != null) {
@@ -130,10 +130,11 @@ class LoginSection extends StatelessWidget {
                     })),
             FlatButton.icon(
                 onPressed: () async {
-                  login(email, password);
+                  await login(email, password);
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   String token = prefs.getString("token");
+                  print(token);
                   if (token != null) {
                     Navigator.pushNamed(context, LandingScreen.id);
                   }

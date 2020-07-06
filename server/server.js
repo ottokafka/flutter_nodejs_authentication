@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+var jwt = require("jsonwebtoken");
 
 async function connectDB() {
   await mongoose.connect(
@@ -26,13 +27,20 @@ app.post("/signup", async (req, res) => {
   const { email, password } = req.body;
   console.log(email);
 
-  let user = new User({
+  let user = await User.findOne({ email });
+
+  if (user) {
+    return res.json({ msg: "Email already taken" });
+  }
+
+  user = new User({
     email,
     password,
   });
 
   await user.save();
-  res.json({ token: "1234567890" });
+  var token = jwt.sign({ id: user.id }, "password");
+  res.json({ token: token });
 });
 
 // login route api
@@ -42,11 +50,15 @@ app.post("/login", async (req, res) => {
 
   let user = await User.findOne({ email });
   console.log(user);
+  if (!user) {
+    return res.json({ msg: "no user found with that email" });
+  }
   if (user.password !== password) {
     return res.json({ msg: "password is not correct" });
   }
 
-  return res.json({ token: "1234567890" });
+  var token = jwt.sign({ id: user.id }, "password");
+  return res.json({ token: token });
 });
 
 app.listen(5000, () => console.log("Example app listening on port 5000!"));
