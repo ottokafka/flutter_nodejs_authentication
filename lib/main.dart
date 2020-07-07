@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
       routes: {
         LandingScreen.id: (context) => LandingScreen(),
         LoginSection.id: (context) => LoginSection(),
+        LogoutScreen.id: (context) => LogoutScreen(),
       },
     );
   }
@@ -170,19 +171,86 @@ class LandingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Center(child: Text("Welcome to the Landing Screen")),
-        FlatButton.icon(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Center(child: Text("Welcome to the Landing Screen")),
+        ],
+      ),
+      bottomNavigationBar: BottomNav(),
+    );
+  }
+}
+
+class BottomNav extends StatefulWidget {
+  BottomNav({Key key}) : super(key: key);
+
+  @override
+  _BottomNavState createState() => _BottomNavState();
+}
+
+class _BottomNavState extends State<BottomNav> {
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 0) {
+        Navigator.pushNamed(context, LandingScreen.id);
+      }
+      if (index == 1) {
+        Navigator.pushNamed(context, LandingScreen.id);
+      }
+      if (index == 2) {
+        Navigator.pushNamed(context, LogoutScreen.id);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          title: Text('Home'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.business),
+          title: Text('Business'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.school),
+          title: Text('Logout'),
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      selectedItemColor: Colors.amber[800],
+      onTap: _onItemTapped,
+    );
+  }
+}
+
+class LogoutScreen extends StatelessWidget {
+  static const String id = "LogoutScreen";
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Center(child: Text("Logout")),
+          FlatButton.icon(
             onPressed: () async {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               await prefs.setString('token', null);
               Navigator.pushNamed(context, LoginSection.id);
             },
             icon: Icon(Icons.send),
-            label: Text("Logout"))
-      ],
-    ));
+            label: Text("Logout"),
+          )
+        ],
+      ),
+      bottomNavigationBar: BottomNav(),
+    );
   }
 }
