@@ -1,10 +1,11 @@
-POST http://localhost:5000/signup HTTP/1.1
+POST http://localhost:5000/login HTTP/1.1
 Content-Type: application/json
 
 {
     "email": "bob@gmail.com",
     "password": "qwertyuio"
 }
+###
 
-
+GET http://localhost:5000/private HTTP/1.1
 

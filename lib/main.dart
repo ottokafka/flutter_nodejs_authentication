@@ -1,5 +1,6 @@
 //
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
         LandingScreen.id: (context) => LandingScreen(),
         LoginSection.id: (context) => LoginSection(),
         LogoutScreen.id: (context) => LogoutScreen(),
+        Private.id: (context) => Private(),
       },
     );
   }
@@ -198,7 +200,7 @@ class _BottomNavState extends State<BottomNav> {
         Navigator.pushNamed(context, LandingScreen.id);
       }
       if (index == 1) {
-        Navigator.pushNamed(context, LandingScreen.id);
+        Navigator.pushNamed(context, Private.id);
       }
       if (index == 2) {
         Navigator.pushNamed(context, LogoutScreen.id);
@@ -249,6 +251,84 @@ class LogoutScreen extends StatelessWidget {
             label: Text("Logout"),
           )
         ],
+      ),
+      bottomNavigationBar: BottomNav(),
+    );
+  }
+}
+
+Future<Album> fetchAlbum() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String token = prefs.getString("token");
+  print(token);
+
+  final response = await http.get(
+    'http://localhost:5000/private',
+    headers: {"token": token},
+  );
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    return Album.fromJson(json.decode(response.body));
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load album');
+  }
+}
+
+class Album {
+  final String msg;
+
+  Album({this.msg});
+
+  factory Album.fromJson(Map<String, dynamic> json) {
+    return Album(
+      msg: json['msg'],
+    );
+  }
+}
+
+class Private extends StatefulWidget {
+  static const String id = "Private";
+  Private({Key key}) : super(key: key);
+
+  @override
+  _PrivateState createState() => _PrivateState();
+}
+
+class _PrivateState extends State<Private> {
+  Future<Album> futureAlbum;
+
+  @override
+  void initState() {
+    super.initState();
+    futureAlbum = fetchAlbum();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Scaffold(
+        appBar: AppBar(
+          title: Text('Fetch Data Example'),
+        ),
+        body: Center(
+          child: FutureBuilder<Album>(
+            future: futureAlbum,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data.msg);
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+
+              // By default, show a loading spinner.
+              return CircularProgressIndicator();
+            },
+          ),
+        ),
       ),
       bottomNavigationBar: BottomNav(),
     );
