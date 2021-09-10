@@ -59,7 +59,7 @@ class SignUpSection extends StatelessWidget {
 signup(email, password) async {
   var url = "http://127.0.0.1:5000"; // iOS
   final http.Response response = await http.post(
-    url,
+    Uri.parse(url),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
